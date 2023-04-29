@@ -1,9 +1,0 @@
-const STATUS = {
-    PROGRESS: "IN PROGRESS",
-    PENDING: "PENDING",
-    COMPLETED: "COMPLETED",
-    POSTPONED: "POSTPONED",
-    DELETED: "DELETED"
-} 
-
-export default { STATUS }
