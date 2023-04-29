@@ -1,6 +1,7 @@
-import axios from 'axios'
-import TaskCard from './TaskCard/TaskCard'
 import { useEffect, useState } from 'react'
+import { Box } from '@mui/material'
+import TaskCard from './TaskCard/TaskCard'
+import axios from 'axios'
 
 function TaskList() {
   const [taskList, setTaskList] = useState([])
@@ -28,17 +29,32 @@ function TaskList() {
 
   return (
     <>
-      <h2>My Tasks</h2>
-      {taskList.map(task => (
-        <TaskCard
-          key={task.id}
-          title={task.title}
-          dueDate={task.dueDate}
-          status={task.status}
-          onEdit={editButtonHandler}
-          onDelete={deleteButtonHandler}
-        />
-      ))}
+      <Box sx={{
+        backgroundColor: '#fff',
+        mt: '30px',
+        padding: '20px',
+        boxShadow: ' 0 2px 5px rgba(0,0,0,0.3)',
+        maxHeight: '70vh'
+      }}>
+        <h2>My Tasks</h2>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 1,
+          }}>
+          {taskList.map(task => (
+            <TaskCard
+              key={task.id}
+              title={task.title}
+              dueDate={task.dueDate}
+              status={task.status}
+              onEdit={editButtonHandler}
+              onDelete={deleteButtonHandler}
+            />
+          ))}
+        </Box>
+      </Box>
     </>
   )
 }

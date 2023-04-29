@@ -9,16 +9,16 @@ import { Edit, Delete, Event } from '@mui/icons-material'
 
 const TaskCard = ({ title, dueDate, status, onEdit, onDelete }) => {
   return (
-    <Card sx={{ minWidth: 275 }}>
-      <CardContent>
+    <Card sx={{ mb: '1em' }}>
+      <CardContent sx={{ padding: 0, padding: '8px 0 0 0' }}>
         <Typography
           variant="h3"
           component="div"
           sx={{
             fontSize: {
               xs: '1em',
-              sm: '2em',
-              md: '2.5em',
+              sm: '1.2em',
+              md: '1.5em',
             },
           }}>
           {title}
@@ -27,8 +27,8 @@ const TaskCard = ({ title, dueDate, status, onEdit, onDelete }) => {
           sx={{
             mt: 2,
             fontSize: {
-              xs: '0.9em',
-              sm: '1.2em',
+              xs: '0.6em',
+              sm: '0.9em',
             },
           }}
           color="text.secondary">
@@ -36,8 +36,13 @@ const TaskCard = ({ title, dueDate, status, onEdit, onDelete }) => {
           Due Date: {dueDate}
         </Typography>
       </CardContent>
-      <CardActions sx={{ display: 'flex', justifyContent: 'flex-end', pt: 0 }}>
-        <IconButton onClick={onEdit}>
+      <CardActions
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          padding: '0 2px 0 0',
+        }}>
+        <IconButton onClick={onEdit} >
           <Edit />
         </IconButton>
         <IconButton onClick={onDelete}>
