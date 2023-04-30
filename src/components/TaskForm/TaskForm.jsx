@@ -17,7 +17,7 @@ const schema = yup.object({
     .required('Due Date is a required field'),
 })
 
-function TaskForm() {
+function TaskForm({ onRefresh }) {
   const {
     control,
     handleSubmit,
@@ -26,10 +26,11 @@ function TaskForm() {
 
   const postTask = async newTask => {
     try {
-      const response = await axios.post(API_URL, newTask)
-      console.log(response)
+      await axios.post(API_URL, newTask)
+      onRefresh()
     } catch (error) {
-      console.error(error)
+      //TODO: Manage task already exist errors
+      console.error(error.response.data.msg)
     }
   }
 

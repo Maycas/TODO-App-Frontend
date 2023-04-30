@@ -7,12 +7,12 @@ import { STATUS } from '../../utils/constants/constants'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-function TaskList() {
+function TaskList({ refresh }) {
   const [taskList, setTaskList] = useState([])
 
   useEffect(() => {
     tasksGetter()
-  }, [])
+  }, [refresh])
 
   const queryParamsFormatter = queryObj => {
     const filteredQueryObj = Object.fromEntries(
@@ -34,7 +34,7 @@ function TaskList() {
       const { data } = await axios.get(request)
       setTaskList(data)
     } catch (error) {
-      console.error(error)
+      console.error(error.response.data.msg)
       if (error.response.status === 404) {
         setTaskList([])
       }
@@ -51,7 +51,6 @@ function TaskList() {
   }
 
   const deleteButtonHandler = id => {
-    console.log('delete clicked for id:', id)
     taskDelete(id)
   }
 

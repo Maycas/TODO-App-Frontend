@@ -3,7 +3,14 @@ import TaskList from './components/TaskList/TaskList'
 
 import './App.module.css'
 import { Typography } from '@mui/material'
+import { useState } from 'react'
 function App() {
+  const [refreshTaskList, toggleRefreshTaskList] = useState(false)
+
+  const handleRefreshTaskList = () => {
+    toggleRefreshTaskList(!refreshTaskList)
+  }
+
   return (
     <>
       <Typography
@@ -14,8 +21,8 @@ function App() {
         }}>
         TODO List
       </Typography>
-      <TaskForm></TaskForm>
-      <TaskList></TaskList>
+      <TaskForm onRefresh={handleRefreshTaskList}></TaskForm>
+      <TaskList refresh={refreshTaskList}></TaskList>
     </>
   )
 }
