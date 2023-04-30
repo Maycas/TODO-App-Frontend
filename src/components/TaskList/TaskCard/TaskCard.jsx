@@ -9,7 +9,12 @@ import { Edit, Delete, Event } from '@mui/icons-material'
 
 const TaskCard = ({ id, title, dueDate, status, onEdit, onDelete }) => {
   const onEditHandler = () => {
-    onEdit(id)
+    onEdit({
+      id: id,
+      title: title,
+      status: status,
+      dueDate: dueDate
+    })
   }
 
   const onDeleteHandler = () => {

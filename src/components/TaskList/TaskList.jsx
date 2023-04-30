@@ -7,7 +7,7 @@ import { STATUS } from '../../utils/constants/constants'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-function TaskList({ refresh, onEditButtonClicked }) {
+function TaskList({ refresh, onEditButtonClicked, onEditTask }) {
   const [taskList, setTaskList] = useState([])
 
   useEffect(() => {
@@ -54,9 +54,9 @@ function TaskList({ refresh, onEditButtonClicked }) {
     taskDelete(id)
   }
 
-  const editButtonHandler = id => {
-    console.log('edit clicked for id:', id)
+  const editButtonHandler = task => {
     onEditButtonClicked()
+    onEditTask(task)
   }
 
   return (

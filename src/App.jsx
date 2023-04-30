@@ -12,9 +12,14 @@ function App() {
   const [refreshTaskList, toggleRefreshTaskList] = useState(false)
   const [modalClosed, toggleModal] = useState(true)
   const [mode, setMode] = useState('edit')
+  const [editTaskInfo, setEditTaskInfo] = useState({})
 
   const handleRefreshTaskList = () => {
     toggleRefreshTaskList(!refreshTaskList)
+  }
+
+  const handleEditTask = task => {
+    setEditTaskInfo(task)
   }
 
   const toggleAddTaskModalHandler = () => {
@@ -45,9 +50,9 @@ function App() {
       </Box>
 
       <TaskModal open={!modalClosed} onClose={toggleAddTaskModalHandler}>
-        <TaskForm onRefresh={handleRefreshTaskList} mode={mode}></TaskForm>
+        <TaskForm onRefresh={handleRefreshTaskList} mode={mode} task={editTaskInfo}></TaskForm>
       </TaskModal>
-      <TaskList refresh={refreshTaskList} onEditButtonClicked={toggleEditTaskModalHandler}></TaskList>
+      <TaskList refresh={refreshTaskList} onEditButtonClicked={toggleEditTaskModalHandler} onEditTask={handleEditTask}></TaskList>
     </>
   )
 }
