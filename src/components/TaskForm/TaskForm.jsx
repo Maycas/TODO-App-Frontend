@@ -17,7 +17,7 @@ const schema = yup.object({
     .required('Due Date is a required field'),
 })
 
-function TaskForm({ onRefresh }) {
+function TaskForm({ onRefresh, onClose, mode }) {
   const {
     control,
     handleSubmit,
@@ -27,6 +27,7 @@ function TaskForm({ onRefresh }) {
   const postTask = async newTask => {
     try {
       await axios.post(API_URL, newTask)
+      onClose()
       onRefresh()
     } catch (error) {
       //TODO: Manage task already exist errors
@@ -34,26 +35,29 @@ function TaskForm({ onRefresh }) {
     }
   }
 
+  const updateTask = async task => {
+    
+  }
+
   const onSubmit = data => {
-    postTask({
-      title: data.title,
-      dueDate: formatDate(data.duedate),
-    })
+    if (mode === 'add') {
+      postTask({
+        title: data.title,
+        dueDate: formatDate(data.duedate),
+      })
+    } else {
+      updateTask()
+    }
+    
   }
 
   return (
     <>
-      <Box
-        sx={{
-          backgroundColor: '#FFF',
-          mt: '30px',
-          padding: '20px',
-          boxShadow: ' 0 2px 5px rgba(0,0,0,0.3)',
-        }}>
+      <Box>
         <Typography
           variant="h2"
           sx={{ fontSize: '2em', mb: '0.75em', fontWeight: 'bold' }}>
-          Add a new Task
+          { mode === 'add' ? 'Add New Task' : 'Edit task'}
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column">

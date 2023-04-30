@@ -1,14 +1,30 @@
+import { Box, Button, Typography } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import { useState } from 'react'
+
 import TaskForm from './components/TaskForm/TaskForm'
 import TaskList from './components/TaskList/TaskList'
+import TaskModal from './components/hoc/Modal/TaskModal'
 
 import './App.module.css'
-import { Typography } from '@mui/material'
-import { useState } from 'react'
+
 function App() {
   const [refreshTaskList, toggleRefreshTaskList] = useState(false)
+  const [modalClosed, toggleModal] = useState(true)
+  const [mode, setMode] = useState('edit')
 
   const handleRefreshTaskList = () => {
     toggleRefreshTaskList(!refreshTaskList)
+  }
+
+  const toggleAddTaskModalHandler = () => {
+    setMode('add')
+    toggleModal(!modalClosed)
+  }
+
+  const toggleEditTaskModalHandler = () => {
+    setMode('edit')
+    toggleModal(!modalClosed)
   }
 
   return (
@@ -21,8 +37,17 @@ function App() {
         }}>
         TODO List
       </Typography>
-      <TaskForm onRefresh={handleRefreshTaskList}></TaskForm>
-      <TaskList refresh={refreshTaskList}></TaskList>
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+        <Button variant="contained" color="success" startIcon={<AddIcon />} onClick={toggleAddTaskModalHandler} >
+          Add Task
+        </Button>
+      </Box>
+
+      <TaskModal open={!modalClosed} onClose={toggleAddTaskModalHandler}>
+        <TaskForm onRefresh={handleRefreshTaskList} mode={mode}></TaskForm>
+      </TaskModal>
+      <TaskList refresh={refreshTaskList} onEditButtonClicked={toggleEditTaskModalHandler}></TaskList>
     </>
   )
 }

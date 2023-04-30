@@ -7,7 +7,7 @@ import { STATUS } from '../../utils/constants/constants'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-function TaskList({ refresh }) {
+function TaskList({ refresh, onEditButtonClicked }) {
   const [taskList, setTaskList] = useState([])
 
   useEffect(() => {
@@ -56,13 +56,14 @@ function TaskList({ refresh }) {
 
   const editButtonHandler = id => {
     console.log('edit clicked for id:', id)
+    onEditButtonClicked()
   }
 
   return (
     <>
       <Box
         sx={{
-          backgroundColor: '#d3cfcf',
+          backgroundColor: '#d8d5d5',
           mt: '30px',
           padding: '20px',
           boxShadow: ' 0 2px 5px rgba(0,0,0,0.3)',
