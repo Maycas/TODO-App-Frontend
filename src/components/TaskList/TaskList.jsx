@@ -5,6 +5,8 @@ import axios from 'axios'
 
 import { STATUS } from '../../utils/constants/constants'
 
+const API_URL = import.meta.env.VITE_API_URL
+
 function TaskList() {
   const [taskList, setTaskList] = useState([])
 
@@ -26,7 +28,7 @@ function TaskList() {
       status: Object.values(STATUS).filter(status => status !== STATUS.DELETED),
     }
     const queryParams = queryParamsFormatter(queryObject)
-    const request = `http://localhost:5001/tasks?${queryParams}`
+    const request = `${API_URL}?${queryParams}`
 
     try {
       const { data } = await axios.get(request)
@@ -41,7 +43,7 @@ function TaskList() {
 
   const taskDelete = async id => {
     try {
-      const { data } = await axios.delete(`http://localhost:5001/tasks/${id}`)
+      const { data } = await axios.delete(`${API_URL}/${id}`)
       tasksGetter()
     } catch (error) {
       console.error(error)
@@ -68,7 +70,7 @@ function TaskList() {
         }}>
         <Typography
           variant="h2"
-          sx={{ fontSize: '2.5em', mb: '0.75em', fontWeight: 'bold' }}>
+          sx={{ fontSize: '2em', mb: '0.75em', fontWeight: 'bold' }}>
           My tasks
         </Typography>
         {taskList.length !== 0 ? (

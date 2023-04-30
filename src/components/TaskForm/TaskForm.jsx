@@ -1,12 +1,13 @@
 import { useForm, Controller } from 'react-hook-form'
-import { Box, TextField, Button, StyledEngineProvider } from '@mui/material'
+import { Box, TextField, Button, Typography } from '@mui/material'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import axios from 'axios'
 import formatDate from '../../utils/helperFunctions/formatDate'
 
-import styles from './TaskForm.module.css'
+const API_URL = import.meta.env.VITE_API_URL
 
 const schema = yup.object({
   title: yup.string().required('Title is a required field'),
@@ -23,17 +24,37 @@ function TaskForm() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
+  const postTask = async newTask => {
+    try {
+      const response = await axios.post(API_URL, newTask)
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const onSubmit = data => {
-    console.log(data)
-    if (data.title) console.log('title', data.title)
-    if (data.duedate) console.log('duedate', formatDate(data.duedate))
+    postTask({
+      title: data.title,
+      dueDate: formatDate(data.duedate),
+    })
   }
 
   return (
     <>
-      <h2>Add a new Task</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <StyledEngineProvider injectFirst>
+      <Box
+        sx={{
+          backgroundColor: '#FFF',
+          mt: '30px',
+          padding: '20px',
+          boxShadow: ' 0 2px 5px rgba(0,0,0,0.3)',
+        }}>
+        <Typography
+          variant="h2"
+          sx={{ fontSize: '2em', mb: '0.75em', fontWeight: 'bold' }}>
+          Add a new Task
+        </Typography>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column">
             <Controller
               name="title"
@@ -42,7 +63,10 @@ function TaskForm() {
                 <TextField
                   {...field}
                   label="Title"
-                  className={styles.input}
+                  sx={{
+                    height: '80px',
+                    mb: '10px',
+                  }}
                   error={Boolean(errors.title)}
                   helperText={errors.title?.message}
                 />
@@ -59,9 +83,10 @@ function TaskForm() {
                       label="Due Date"
                       value={field.value ? field.value.toDate() : null}
                       ampm={false}
-                      className={`${styles.input} ${
-                        errors.duedate ? styles.error : ''
-                      }`}
+                      sx={{
+                        height: '80px',
+                        mb: '10px',
+                      }}
                       slotProps={{
                         textField: {
                           error: Boolean(errors.duedate),
@@ -77,8 +102,8 @@ function TaskForm() {
               Add Task
             </Button>
           </Box>
-        </StyledEngineProvider>
-      </form>
+        </form>
+      </Box>
     </>
   )
 }
