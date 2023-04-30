@@ -7,10 +7,18 @@ import {
 } from '@mui/material'
 import { Edit, Delete, Event } from '@mui/icons-material'
 
-const TaskCard = ({ title, dueDate, status, onEdit, onDelete }) => {
+const TaskCard = ({ id, title, dueDate, status, onEdit, onDelete }) => {
+  const onEditHandler = () => {
+    onEdit(id)
+  }
+
+  const onDeleteHandler = () => {
+    onDelete(id)
+  }
+
   return (
-    <Card sx={{ mb: '1em' }}>
-      <CardContent sx={{ padding: 0, padding: '8px 0 0 0' }}>
+    <Card sx={{ mb: '0.75em', boxShadow: '0 2px 5px rgba(0,0,0,0.3)' }}>
+      <CardContent sx={{ padding: '1em 0 0 0' }}>
         <Typography
           variant="h3"
           component="div"
@@ -42,10 +50,10 @@ const TaskCard = ({ title, dueDate, status, onEdit, onDelete }) => {
           justifyContent: 'flex-end',
           padding: '0 2px 0 0',
         }}>
-        <IconButton onClick={onEdit} >
+        <IconButton onClick={onEditHandler}>
           <Edit />
         </IconButton>
-        <IconButton onClick={onDelete}>
+        <IconButton onClick={onDeleteHandler}>
           <Delete />
         </IconButton>
       </CardActions>

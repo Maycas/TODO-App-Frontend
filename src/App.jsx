@@ -2,7 +2,6 @@ import TaskForm from './components/TaskForm/TaskForm'
 import TaskList from './components/TaskList/TaskList'
 
 import './App.module.css'
-
 function App() {
   return (
     <>
