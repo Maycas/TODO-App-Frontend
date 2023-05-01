@@ -12,7 +12,7 @@ const API_URL = import.meta.env.VITE_API_URL
 
 const schema = yup.object({
   title: yup.string().required('Title is a required field'),
-  duedate: yup
+  dueDate: yup
     .date()
     .typeError('Date must be of format YYYY/MM/DD HH:MM:SS')
     .required('Due Date is a required field'),
@@ -44,7 +44,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
     } else {
       postTask({
         title: data.title,
-        dueDate: formatDate(data.duedate),
+        dueDate: formatDate(data.dueDate),
       })
     }
   }
@@ -63,10 +63,9 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               name="title"
               control={control}
               render={({ field }) => {
-                console.log('task', task)
-                console.log('input', field)
-                console.log('input', field.value)
-
+                // console.log('task', task)
+                // console.log('input', field)
+                // console.log('input', field.value)
                 return (
                   <TextField
                     {...field}
@@ -83,11 +82,11 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               }}
             />
             <Controller
-              name="duedate"
+              name="dueDate"
               control={control}
               render={({ field }) => {
-                console.log('duedate', field)
-                console.log('duedate', field.value)
+                // console.log('duedate', field)
+                // console.log('duedate', field.value)
                 return (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
@@ -101,8 +100,8 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
                       }}
                       slotProps={{
                         textField: {
-                          error: Boolean(errors.duedate),
-                          helperText: errors.duedate?.message,
+                          error: Boolean(errors.dueDate),
+                          helperText: errors.dueDate?.message,
                         },
                       }}
                     />
