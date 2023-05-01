@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Box, TextField, Button, Typography } from '@mui/material'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
@@ -7,6 +7,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import formatDate from '../../utils/helperFunctions/formatDate'
+import dayjs from 'dayjs'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -22,8 +23,17 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
+
+  useEffect(() => {
+    if (isEditMode) {
+      setValue('title', task.title)
+      // console.log('useEffect dayjs', dayjs(task.dueDate).toDate())
+      //setValue('dueDate', formatDate(dayjs(task.dueDate).toDate()))
+    }
+  }, [isEditMode, setValue, task])
 
   const postTask = async newTask => {
     try {
@@ -63,9 +73,9 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               name="title"
               control={control}
               render={({ field }) => {
-                // console.log('task', task)
-                // console.log('input', field)
-                // console.log('input', field.value)
+                console.log('task', task)
+                console.log('input', field)
+                console.log('input', field.value)
                 return (
                   <TextField
                     {...field}
@@ -74,7 +84,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
                       height: '80px',
                       mb: '10px',
                     }}
-                    value={field.value}
+                    value={field.value ?? ''}
                     error={Boolean(errors.title)}
                     helperText={errors.title?.message}
                   />
@@ -87,12 +97,13 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               render={({ field }) => {
                 // console.log('duedate', field)
                 // console.log('duedate', field.value)
+                // console.log('onChange', field.onChange)
                 return (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
                       {...field}
                       label="Due Date"
-                      value={field.value ? field.value.toDate() : null}
+                      value={field.value ? field.value.toDate() : null} // Initialize value to null
                       ampm={false}
                       sx={{
                         height: '80px',
