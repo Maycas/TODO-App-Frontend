@@ -11,7 +11,7 @@ import './App.module.css'
 function App() {
   const [refreshTaskList, toggleRefreshTaskList] = useState(false)
   const [modalClosed, toggleModal] = useState(true)
-  const [mode, setMode] = useState('edit')
+  const [isEditMode, setIsEditMode] = useState(false)
   const [editTaskInfo, setEditTaskInfo] = useState({})
 
   const handleRefreshTaskList = () => {
@@ -23,12 +23,12 @@ function App() {
   }
 
   const toggleAddTaskModalHandler = () => {
-    setMode('add')
+    setIsEditMode(false)
     toggleModal(!modalClosed)
   }
 
   const toggleEditTaskModalHandler = () => {
-    setMode('edit')
+    setIsEditMode(true)
     toggleModal(!modalClosed)
   }
 
@@ -45,12 +45,12 @@ function App() {
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
         <Button variant="contained" color="success" startIcon={<AddIcon />} onClick={toggleAddTaskModalHandler} >
-          Add Task
+          Add
         </Button>
       </Box>
 
       <TaskModal open={!modalClosed} onClose={toggleAddTaskModalHandler}>
-        <TaskForm onRefresh={handleRefreshTaskList} mode={mode} task={editTaskInfo}></TaskForm>
+        <TaskForm onRefresh={handleRefreshTaskList} isEditMode={isEditMode} task={editTaskInfo}></TaskForm>
       </TaskModal>
       <TaskList refresh={refreshTaskList} onEditButtonClicked={toggleEditTaskModalHandler} onEditTask={handleEditTask}></TaskList>
     </>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Box, TextField, Button, Typography } from '@mui/material'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
@@ -17,7 +18,7 @@ const schema = yup.object({
     .required('Due Date is a required field'),
 })
 
-function TaskForm({ onRefresh, onClose, mode }) {
+function TaskForm({ onRefresh, onClose, isEditMode, task }) {
   const {
     control,
     handleSubmit,
@@ -35,20 +36,17 @@ function TaskForm({ onRefresh, onClose, mode }) {
     }
   }
 
-  const updateTask = async task => {
-    
-  }
+  const updateTask = async task => {}
 
   const onSubmit = data => {
-    if (mode === 'add') {
+    if (isEditMode) {
+      console.log('update task')
+    } else {
       postTask({
         title: data.title,
         dueDate: formatDate(data.duedate),
       })
-    } else {
-      updateTask()
     }
-    
   }
 
   return (
@@ -57,30 +55,39 @@ function TaskForm({ onRefresh, onClose, mode }) {
         <Typography
           variant="h2"
           sx={{ fontSize: '2em', mb: '0.75em', fontWeight: 'bold' }}>
-          { mode === 'add' ? 'Add New Task' : 'Edit task'}
+          {isEditMode ? 'Edit task' : 'Add task'}
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column">
             <Controller
               name="title"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Title"
-                  sx={{
-                    height: '80px',
-                    mb: '10px',
-                  }}
-                  error={Boolean(errors.title)}
-                  helperText={errors.title?.message}
-                />
-              )}
+              render={({ field }) => {
+                console.log('task', task)
+                console.log('input', field)
+                console.log('input', field.value)
+
+                return (
+                  <TextField
+                    {...field}
+                    label="Title"
+                    sx={{
+                      height: '80px',
+                      mb: '10px',
+                    }}
+                    value={field.value}
+                    error={Boolean(errors.title)}
+                    helperText={errors.title?.message}
+                  />
+                )
+              }}
             />
             <Controller
               name="duedate"
               control={control}
               render={({ field }) => {
+                console.log('duedate', field)
+                console.log('duedate', field.value)
                 return (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
@@ -104,7 +111,7 @@ function TaskForm({ onRefresh, onClose, mode }) {
               }}
             />
             <Button type="submit" variant="contained" color="primary">
-              Add Task
+              {isEditMode ? 'Update Task' : 'Add Task'}
             </Button>
           </Box>
         </form>
