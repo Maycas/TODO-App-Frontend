@@ -48,6 +48,17 @@ const TaskCard = ({ id, title, dueDate, status, onEdit, onDelete }) => {
           <Event sx={{ fontSize: 'medium', mr: 0.5 }} />
           Due Date: {dueDate}
         </Typography>
+        <Typography
+          sx={{
+            mt: 2,
+            fontSize: {
+              xs: '0.6em',
+              sm: '0.9em',
+            },
+          }}
+          color="text.secondary">
+          Status: {status}
+        </Typography>
       </CardContent>
       <CardActions
         sx={{
