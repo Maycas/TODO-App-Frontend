@@ -14,12 +14,9 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import axios from 'axios'
 import formatDate from '../../utils/helperFunctions/formatDate'
 import dayjs from 'dayjs'
 import { STATUS } from '../../utils/constants/constants'
-
-const API_URL = import.meta.env.VITE_API_URL
 
 const schema = yup.object({
   title: yup.string().required('Title is a required field'),
@@ -29,7 +26,7 @@ const schema = yup.object({
     .required('Due Date is a required field'),
 })
 
-function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
+function TaskForm({ task, postTask, updateTask }) {
   const {
     control,
     handleSubmit,
@@ -41,48 +38,21 @@ function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
   })
 
   useEffect(() => {
-    if (isEditMode) {
-      console.log('getValues on useEffect', getValues())
+    if (task) {
       setValue('title', task.title)
-      //setValue('dueDate', task.dueDate)
+      setValue('dueDate', task.dueDate)
       setValue('status', task.status)
     }
-  }, [isEditMode, setValue, task])
-
-  const postTask = async newTask => {
-    try {
-      await axios.post(API_URL, newTask)
-      onClose()
-      onRefresh()
-    } catch (error) {
-      onError(error.response.data.msg)
-    }
-  }
-
-  const updateTask = async updatedTask => {
-    updatedTask = {
-      ...task,
-      ...updatedTask,
-    }
-
-    const { id, ...rest } = updatedTask
-
-    try {
-      await axios.put(`${API_URL}/${id}`, rest)
-      onClose()
-      onRefresh()
-    } catch (error) {
-      onError(error.response.data.msg)
-    }
-  }
+  }, [setValue, task])
 
   const onSubmit = data => {
     console.log(data)
     console.log('getValues on onSubmit', getValues())
 
-    if (isEditMode) {
+    if (task) {
       console.log(data)
       updateTask({
+        ...task,
         title: data.title,
         dueDate: formatDate(data.dueDate),
         status: data.status,
@@ -101,7 +71,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
         <Typography
           variant="h2"
           sx={{ fontSize: '2em', mb: '0.75em', fontWeight: 'bold' }}>
-          {isEditMode ? 'Edit task' : 'Add task'}
+          {task ? 'Edit task' : 'Add task'}
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column">
@@ -128,15 +98,16 @@ function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
               name="dueDate"
               control={control}
               render={({ field }) => {
-                console.log('field', field)
-                console.log('duedate', field.value)
-                console.log('duedate formatted', dayjs(field.value).toDate())
+                // Aqui lo que he hecho es ver en creacion (que funcionaba bien) como es el field.value que se crea,
+                // he visto que lo que maneja es el objeto que devuelve el dayjs, y he hecho lo mismo en edicion
+                // el pete que me daba de isBeforeDay is not a function, es porque lo que pasabamos era un string en lugar del objeto que te decia
+                // no me termina de convencer, porque en creacion funcionaba pero la solucion es esta
                 return (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
                       {...field}
                       label="Due Date"
-                      value={field.value ? dayjs(field.value).toDate() : null} // Initialize value to null
+                      value={field.value ? dayjs(field.value) : null} // Initialize value to null
                       ampm={false}
                       sx={{
                         height: '80px',
@@ -153,7 +124,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
                 )
               }}
             />
-            {!isEditMode ? null : (
+            {task && (
               <Controller
                 name="status"
                 control={control}
@@ -183,7 +154,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
               />
             )}
             <Button type="submit" variant="contained" color="primary">
-              {isEditMode ? 'Update Task' : 'Add Task'}
+              {task ? 'Update Task' : 'Add Task'}
             </Button>
           </Box>
         </form>

@@ -1,60 +1,8 @@
-import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import TaskCard from './TaskCard/TaskCard'
-import axios from 'axios'
 
-import { STATUS } from '../../utils/constants/constants'
 
-const API_URL = import.meta.env.VITE_API_URL
-
-function TaskList({ refresh, onEditButtonClicked, onEditTask, onError }) {
-  const [taskList, setTaskList] = useState([])
-
-  useEffect(() => {
-    tasksGetter()
-  }, [refresh])
-
-  const queryParamsFormatter = queryObj => {
-    const filteredQueryObj = Object.fromEntries(
-      Object.entries(queryObj).filter(([key, value]) => value !== undefined)
-    )
-    filteredQueryObj.status = filteredQueryObj.status.join(',')
-
-    return new URLSearchParams(filteredQueryObj).toString()
-  }
-
-  const tasksGetter = async () => {
-    const queryObject = {
-      status: Object.values(STATUS).filter(status => status !== STATUS.DELETED),
-    }
-    const queryParams = queryParamsFormatter(queryObject)
-    const request = `${API_URL}?${queryParams}`
-
-    try {
-      const { data } = await axios.get(request)
-      setTaskList(data)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const taskDelete = async id => {
-    try {
-      const { data } = await axios.delete(`${API_URL}/${id}`)
-      tasksGetter()
-    } catch (error) {
-      onError(error.response.data.msg)
-    }
-  }
-
-  const deleteButtonHandler = id => {
-    taskDelete(id)
-  }
-
-  const editButtonHandler = task => {
-    onEditButtonClicked()
-    onEditTask(task)
-  }
+function TaskList({ taskList, onTaskDelete, onEditTask }) {
 
   return (
     <>
@@ -70,7 +18,7 @@ function TaskList({ refresh, onEditButtonClicked, onEditTask, onError }) {
           sx={{ fontSize: '2em', mb: '0.75em', fontWeight: 'bold' }}>
           My tasks
         </Typography>
-        {taskList.length !== 0 ? (
+        {taskList.length ? ( // aqui solo necesitas preguntar por el length de tasklist, si es 0 sera falsy y ira al segundo caso
           <Box
             sx={{
               display: 'grid',
@@ -86,8 +34,8 @@ function TaskList({ refresh, onEditButtonClicked, onEditTask, onError }) {
                 title={task.title}
                 dueDate={task.dueDate}
                 status={task.status}
-                onEdit={editButtonHandler}
-                onDelete={deleteButtonHandler}
+                onEdit={onEditTask}
+                onDelete={onTaskDelete}
               />
             ))}
           </Box>
