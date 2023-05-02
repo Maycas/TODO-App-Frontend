@@ -7,13 +7,15 @@ import {
 } from '@mui/material'
 import { Edit, Delete, Event } from '@mui/icons-material'
 
+import { STATUS } from '../../../utils/constants/constants'
+
 const TaskCard = ({ id, title, dueDate, status, onEdit, onDelete }) => {
   const onEditHandler = () => {
     onEdit({
       id: id,
       title: title,
       status: status,
-      dueDate: dueDate
+      dueDate: dueDate,
     })
   }
 
@@ -21,8 +23,21 @@ const TaskCard = ({ id, title, dueDate, status, onEdit, onDelete }) => {
     onDelete(id)
   }
 
+  const cardColor = {
+    [STATUS.PROGRESS]: 'rgba(72, 108, 254, 1)',
+    [STATUS.PENDING]: '',
+    [STATUS.COMPLETED]: 'rgba(61, 181, 47, 1)',
+    [STATUS.POSTPONED]: 'rgba(255, 165, 0, 1)',
+    [STATUS.DELETED]: 'rgba(167, 166, 166, 1)',
+  }
+
   return (
-    <Card sx={{ mb: '0.75em', boxShadow: '0 2px 5px rgba(0,0,0,0.3)' }}>
+    <Card
+      sx={{
+        mb: '0.75em',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+        backgroundColor: cardColor[status],
+      }}>
       <CardContent sx={{ padding: '1em 0 0 0' }}>
         <Typography
           variant="h3"

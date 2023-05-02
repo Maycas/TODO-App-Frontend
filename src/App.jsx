@@ -74,6 +74,7 @@ function App() {
           onError={onErrorHandler}
         />
       </TaskModal>
+
       <TaskList
         refresh={refreshTaskList}
         onEditButtonClicked={toggleEditTaskModalHandler}
