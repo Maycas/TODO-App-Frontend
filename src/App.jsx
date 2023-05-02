@@ -5,6 +5,7 @@ import { useState } from 'react'
 import TaskForm from './components/TaskForm/TaskForm'
 import TaskList from './components/TaskList/TaskList'
 import TaskModal from './components/hoc/Modal/TaskModal'
+import AlertPopup from './components/hoc/Alerts/Alert'
 
 import './App.module.css'
 
@@ -13,6 +14,7 @@ function App() {
   const [modalClosed, toggleModal] = useState(true)
   const [isEditMode, setIsEditMode] = useState(false)
   const [editTaskInfo, setEditTaskInfo] = useState({})
+  const [error, setError] = useState('')
 
   const handleRefreshTaskList = () => {
     toggleRefreshTaskList(!refreshTaskList)
@@ -32,6 +34,17 @@ function App() {
     toggleModal(!modalClosed)
   }
 
+  const onErrorHandler = message => {
+    setError(message)
+  }
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setError('')
+  }
+
   return (
     <>
       <Typography
@@ -44,15 +57,37 @@ function App() {
       </Typography>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-        <Button variant="contained" color="success" startIcon={<AddIcon />} onClick={toggleAddTaskModalHandler} >
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<AddIcon />}
+          onClick={toggleAddTaskModalHandler}>
           Add
         </Button>
       </Box>
 
       <TaskModal open={!modalClosed} onClose={toggleAddTaskModalHandler}>
-        <TaskForm onRefresh={handleRefreshTaskList} isEditMode={isEditMode} task={editTaskInfo}></TaskForm>
+        <TaskForm
+          onRefresh={handleRefreshTaskList}
+          isEditMode={isEditMode}
+          task={editTaskInfo}
+          onError={onErrorHandler}
+        />
       </TaskModal>
-      <TaskList refresh={refreshTaskList} onEditButtonClicked={toggleEditTaskModalHandler} onEditTask={handleEditTask}></TaskList>
+      <TaskList
+        refresh={refreshTaskList}
+        onEditButtonClicked={toggleEditTaskModalHandler}
+        onEditTask={handleEditTask}
+        onError={onErrorHandler}
+      />
+
+      <AlertPopup
+        open={Boolean(error)}
+        handleClose={handleAlertClose}
+        severity={'error'}
+        message={error}
+        autoHideDuration={3000}
+      />
     </>
   )
 }

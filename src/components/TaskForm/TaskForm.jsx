@@ -29,7 +29,7 @@ const schema = yup.object({
     .required('Due Date is a required field'),
 })
 
-function TaskForm({ onRefresh, onClose, isEditMode, task }) {
+function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
   const {
     control,
     handleSubmit,
@@ -55,8 +55,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
       onClose()
       onRefresh()
     } catch (error) {
-      //TODO: Manage task already exist errors
-      console.error(error.response.data.msg)
+      onError(error.response.data.msg)
     }
   }
 
@@ -73,7 +72,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
       onClose()
       onRefresh()
     } catch (error) {
-      console.error(error.response.data.msg)
+      onError(error.response.data.msg)
     }
   }
 
@@ -110,9 +109,6 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               name="title"
               control={control}
               render={({ field }) => {
-                // console.log('task', task)
-                // console.log('input', field)
-                // console.log('input', field.value)
                 return (
                   <TextField
                     {...field}
@@ -132,9 +128,9 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               name="dueDate"
               control={control}
               render={({ field }) => {
-                // console.log('field', field)
-                // console.log('duedate', field.value)
-                // console.log('duedate formatted', dayjs(field.value).toDate())
+                console.log('field', field)
+                console.log('duedate', field.value)
+                console.log('duedate formatted', dayjs(field.value).toDate())
                 return (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
