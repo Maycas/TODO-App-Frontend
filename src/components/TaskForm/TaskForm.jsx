@@ -165,14 +165,14 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
                   return (
                     <FormControl fullWidth>
                       <InputLabel id="status-label">Status</InputLabel>
-                      <Select 
+                      <Select
                         {...field}
                         labelId="status-label"
                         label="Status"
+                        value={field.value ? field.value : STATUS.PENDING}
                         sx={{
                           mb: '25px',
-                        }}
-                      >
+                        }}>
                         {Object.entries(STATUS).map(([key, value]) => {
                           return (
                             <MenuItem key={key} value={value}>
