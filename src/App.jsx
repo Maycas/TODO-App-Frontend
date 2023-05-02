@@ -56,7 +56,7 @@ function App() {
         TODO List
       </Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
         <Button
           variant="contained"
           color="success"

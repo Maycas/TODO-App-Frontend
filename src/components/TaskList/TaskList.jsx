@@ -74,7 +74,7 @@ function TaskList({ refresh, onEditButtonClicked, onEditTask, onError }) {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: ['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(4, 1fr)'],
               gap: 1,
               overflow: 'auto',
               maxHeight: '90vh',

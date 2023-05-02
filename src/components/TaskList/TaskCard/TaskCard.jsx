@@ -24,11 +24,11 @@ const TaskCard = ({ id, title, dueDate, status, onEdit, onDelete }) => {
   }
 
   const cardColor = {
-    [STATUS.PROGRESS]: 'rgba(72, 108, 254, 1)',
-    [STATUS.PENDING]: '',
-    [STATUS.COMPLETED]: 'rgba(61, 181, 47, 1)',
-    [STATUS.POSTPONED]: 'rgba(255, 165, 0, 1)',
-    [STATUS.DELETED]: 'rgba(167, 166, 166, 1)',
+    [STATUS.PROGRESS]: 'rgba(72, 108, 254, .7)',
+    [STATUS.PENDING]: 'rgba(230, 162, 60, .7)',
+    [STATUS.COMPLETED]: 'rgba(47, 170, 116, .7)',
+    [STATUS.POSTPONED]: 'rgba(224, 64, 51, .7)',
+    [STATUS.DELETED]: 'rgba(111, 113, 121, .7)',
   }
 
   return (
