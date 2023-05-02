@@ -7,7 +7,7 @@ import { STATUS } from '../../utils/constants/constants'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-function TaskList({ refresh, onEditButtonClicked, onEditTask }) {
+function TaskList({ refresh, onEditButtonClicked, onEditTask, onError }) {
   const [taskList, setTaskList] = useState([])
 
   useEffect(() => {
@@ -34,10 +34,7 @@ function TaskList({ refresh, onEditButtonClicked, onEditTask }) {
       const { data } = await axios.get(request)
       setTaskList(data)
     } catch (error) {
-      console.error(error.response.data.msg)
-      if (error.response.status === 404) {
-        setTaskList([])
-      }
+      console.error(error)
     }
   }
 
@@ -46,7 +43,7 @@ function TaskList({ refresh, onEditButtonClicked, onEditTask }) {
       const { data } = await axios.delete(`${API_URL}/${id}`)
       tasksGetter()
     } catch (error) {
-      console.error(error)
+      onError(error.response.data.msg)
     }
   }
 
