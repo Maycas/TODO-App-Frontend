@@ -1,6 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { Box, TextField, Button, Typography } from '@mui/material'
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  MenuItem,
+  InputLabel,
+  Select,
+  FormControl,
+} from '@mui/material'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import * as yup from 'yup'
@@ -8,6 +17,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import formatDate from '../../utils/helperFunctions/formatDate'
 import dayjs from 'dayjs'
+import { STATUS } from '../../utils/constants/constants'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -25,13 +35,15 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) })
+  } = useForm({
+    resolver: yupResolver(schema),
+  })
 
   useEffect(() => {
     if (isEditMode) {
       setValue('title', task.title)
-      // console.log('useEffect dayjs', dayjs(task.dueDate).toDate())
-      //setValue('dueDate', formatDate(dayjs(task.dueDate).toDate()))
+      //setValue('dueDate', task.dueDate)
+      //setValue('status', task.status)
     }
   }, [isEditMode, setValue, task])
 
@@ -46,11 +58,31 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
     }
   }
 
-  const updateTask = async task => {}
+  const updateTask = async updatedTask => {
+    updatedTask = {
+      ...task,
+      ...updatedTask,
+    }
+
+    const { id, ...rest } = updatedTask
+
+    try {
+      await axios.put(`${API_URL}/${id}`, rest)
+      onClose()
+      onRefresh()
+    } catch (error) {
+      console.error(error.response.data.msg)
+    }
+  }
 
   const onSubmit = data => {
     if (isEditMode) {
-      console.log('update task')
+      console.log(data)
+      updateTask({
+        title: data.title,
+        dueDate: formatDate(data.dueDate),
+        status: data.status,
+      })
     } else {
       postTask({
         title: data.title,
@@ -73,9 +105,9 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               name="title"
               control={control}
               render={({ field }) => {
-                console.log('task', task)
-                console.log('input', field)
-                console.log('input', field.value)
+                // console.log('task', task)
+                // console.log('input', field)
+                // console.log('input', field.value)
                 return (
                   <TextField
                     {...field}
@@ -95,15 +127,15 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
               name="dueDate"
               control={control}
               render={({ field }) => {
-                // console.log('duedate', field)
+                // console.log('field', field)
                 // console.log('duedate', field.value)
-                // console.log('onChange', field.onChange)
+                // console.log('duedate formatted', dayjs(field.value).toDate())
                 return (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
                       {...field}
                       label="Due Date"
-                      value={field.value ? field.value.toDate() : null} // Initialize value to null
+                      value={field.value ? dayjs(field.value).toDate() : null} // Initialize value to null
                       ampm={false}
                       sx={{
                         height: '80px',
@@ -120,6 +152,37 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
                 )
               }}
             />
+            {!isEditMode ? null : (
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => {
+                  console.log(field)
+                  return (
+                    <FormControl fullWidth>
+                      <InputLabel id="status-label">Status</InputLabel>
+                      <Select
+                        labelId="status-label"
+                        label="Status"
+                        sx={{
+                          mb: '25px',
+                        }}
+                        //value={field.value ? field.value : STATUS.PENDING}
+                      >
+                        {Object.entries(STATUS).map(([key, value]) => {
+                          //console.log('field.value', field.value)
+                          return (
+                            <MenuItem key={value} value={value}>
+                              {value}
+                            </MenuItem>
+                          )
+                        })}
+                      </Select>
+                    </FormControl>
+                  )
+                }}
+              />
+            )}
             <Button type="submit" variant="contained" color="primary">
               {isEditMode ? 'Update Task' : 'Add Task'}
             </Button>
