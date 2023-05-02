@@ -34,6 +34,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
     control,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -41,9 +42,10 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
 
   useEffect(() => {
     if (isEditMode) {
+      console.log('getValues on useEffect', getValues())
       setValue('title', task.title)
       //setValue('dueDate', task.dueDate)
-      //setValue('status', task.status)
+      setValue('status', task.status)
     }
   }, [isEditMode, setValue, task])
 
@@ -76,6 +78,9 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
   }
 
   const onSubmit = data => {
+    console.log(data)
+    console.log('getValues on onSubmit', getValues())
+
     if (isEditMode) {
       console.log(data)
       updateTask({
@@ -157,22 +162,20 @@ function TaskForm({ onRefresh, onClose, isEditMode, task }) {
                 name="status"
                 control={control}
                 render={({ field }) => {
-                  console.log(field)
                   return (
                     <FormControl fullWidth>
                       <InputLabel id="status-label">Status</InputLabel>
-                      <Select
+                      <Select 
+                        {...field}
                         labelId="status-label"
                         label="Status"
                         sx={{
                           mb: '25px',
                         }}
-                        //value={field.value ? field.value : STATUS.PENDING}
                       >
                         {Object.entries(STATUS).map(([key, value]) => {
-                          //console.log('field.value', field.value)
                           return (
-                            <MenuItem key={value} value={value}>
+                            <MenuItem key={key} value={value}>
                               {value}
                             </MenuItem>
                           )
