@@ -44,7 +44,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
     if (isEditMode) {
       console.log('getValues on useEffect', getValues())
       setValue('title', task.title)
-      //setValue('dueDate', task.dueDate)
+      setValue('dueDate', task.dueDate)
       setValue('status', task.status)
     }
   }, [isEditMode, setValue, task])
@@ -136,7 +136,7 @@ function TaskForm({ onRefresh, onClose, isEditMode, task, onError }) {
                     <DateTimePicker
                       {...field}
                       label="Due Date"
-                      value={field.value ? dayjs(field.value).toDate() : null} // Initialize value to null
+                      value={field.value ? dayjs(field.value) : null} // Initialize value to null
                       ampm={false}
                       sx={{
                         height: '80px',

@@ -1,6 +1,7 @@
+import { useState } from 'react'
+
 import { Box, Button, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { useState } from 'react'
 
 import TaskForm from './components/TaskForm/TaskForm'
 import TaskList from './components/TaskList/TaskList'
