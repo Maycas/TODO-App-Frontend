@@ -1,45 +1,98 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Box, Button, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import axios from 'axios'
 
 import TaskForm from './components/TaskForm/TaskForm'
 import TaskList from './components/TaskList/TaskList'
 import TaskModal from './components/hoc/Modal/TaskModal'
 import AlertPopup from './components/hoc/Alerts/Alert'
 
+import { STATUS } from './utils/constants/constants'
+const API_URL = import.meta.env.VITE_API_URL
+
 import './App.module.css'
 
 function App() {
-  const [refreshTaskList, toggleRefreshTaskList] = useState(false)
-  const [modalClosed, toggleModal] = useState(true)
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [editTaskInfo, setEditTaskInfo] = useState({})
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [taskList, setTaskList] = useState([])
+  const [editedTask, setEditedTask] = useState({})
   const [error, setError] = useState('')
 
-  const handleRefreshTaskList = () => {
-    toggleRefreshTaskList(!refreshTaskList)
+  useEffect(() => {
+    getTasks()
+  }, [])
+
+  const queryParamsFormatter = queryObj => {
+    const filteredQueryObj = Object.fromEntries(
+      Object.entries(queryObj).filter(([, value]) => value !== undefined)
+    )
+    filteredQueryObj.status = filteredQueryObj.status.join(',')
+
+    return new URLSearchParams(filteredQueryObj).toString()
   }
 
-  const handleEditTask = task => {
-    setEditTaskInfo(task)
+  // API Requests
+  const getTasks = async () => {
+    const queryObject = {
+      status: Object.values(STATUS).filter(status => status !== STATUS.DELETED),
+    }
+    const queryParams = queryParamsFormatter(queryObject)
+    const request = `${API_URL}?${queryParams}`
+
+    try {
+      const { data } = await axios.get(request)
+      setTaskList(data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const postTask = async newTask => {
+    try {
+      await axios.post(API_URL, newTask)
+      getTasks()
+      setIsModalOpen(false)
+    } catch (error) {
+      setError(error.response.data.msg)
+    }
+  }
+
+  const updateTask = async updatedTask => {
+    const { id, ...rest } = updatedTask
+
+    try {
+      await axios.put(`${API_URL}/${id}`, rest)
+      setEditedTask(undefined)
+      getTasks()
+      setIsModalOpen(false)
+    } catch (error) {
+      setError(error.response.data.msg)
+    }
+  }
+
+  const deleteTask = async id => {
+    try {
+      await axios.delete(`${API_URL}/${id}`)
+      getTasks()
+    } catch (error) {
+      setError(error.response.data.msg)
+    }
+  }
+
+  // Handlers
+  const editTaskHandler = task => {
+    setEditedTask(task)
+    setIsModalOpen(true)
   }
 
   const toggleAddTaskModalHandler = () => {
-    setIsEditMode(false)
-    toggleModal(!modalClosed)
+    setEditedTask(undefined)
+    setIsModalOpen(!isModalOpen)
   }
 
-  const toggleEditTaskModalHandler = () => {
-    setIsEditMode(true)
-    toggleModal(!modalClosed)
-  }
-
-  const onErrorHandler = message => {
-    setError(message)
-  }
-
-  const handleAlertClose = (event, reason) => {
+  const alertCloseHandler = (_, reason) => {
     if (reason === 'clickaway') {
       return
     }
@@ -67,29 +120,31 @@ function App() {
         </Button>
       </Box>
 
-      <TaskModal open={!modalClosed} onClose={toggleAddTaskModalHandler}>
-        <TaskForm
-          onRefresh={handleRefreshTaskList}
-          isEditMode={isEditMode}
-          task={editTaskInfo}
-          onError={onErrorHandler}
-        />
-      </TaskModal>
-
       <TaskList
-        refresh={refreshTaskList}
-        onEditButtonClicked={toggleEditTaskModalHandler}
-        onEditTask={handleEditTask}
-        onError={onErrorHandler}
+        taskList={taskList}
+        onEditTask={editTaskHandler}
+        onDeleteTask={deleteTask}
       />
 
-      <AlertPopup
-        open={Boolean(error)}
-        handleClose={handleAlertClose}
-        severity={'error'}
-        message={error}
-        autoHideDuration={3000}
-      />
+      {isModalOpen && (
+        <TaskModal open={isModalOpen} onClose={toggleAddTaskModalHandler}>
+          <TaskForm
+            task={editedTask}
+            postTask={postTask}
+            updateTask={updateTask}
+          />
+        </TaskModal>
+      )}
+
+      {error && (
+        <AlertPopup
+          open={Boolean(error)}
+          handleClose={alertCloseHandler}
+          severity={'error'}
+          message={error}
+          autoHideDuration={3000}
+        />
+      )}
     </>
   )
 }
