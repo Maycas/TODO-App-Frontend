@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Box } from '@mui/material'
 
-const TaskModal = ({ children, open, onClose, ...rest }) => {
+const TaskModal = ({ children, open, onClose }) => {
   return (
     <>
       <Modal
@@ -21,9 +21,7 @@ const TaskModal = ({ children, open, onClose, ...rest }) => {
             boxShadow: 24,
             p: 4,
           }}>
-          {React.Children.map(children, child =>
-            React.cloneElement(child, { onClose, ...rest })
-          )}
+          {children}
         </Box>
       </Modal>
     </>
