@@ -31,8 +31,8 @@ const TaskList = ({ taskList, onDeleteTask, onEditTask }) => (
           }}>
           {taskList.map(task => (
             <TaskCard
-              key={task.id}
-              id={task.id}
+              key={task._id}
+              id={task._id}
               title={task.title}
               dueDate={task.dueDate}
               status={task.status}

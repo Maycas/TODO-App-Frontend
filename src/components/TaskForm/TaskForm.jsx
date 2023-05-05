@@ -31,7 +31,6 @@ function TaskForm({ task, postTask, updateTask }) {
     control,
     handleSubmit,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
